@@ -28,12 +28,14 @@ namespace IndyBooks.Controllers
         [HttpGet] 
         public IActionResult GetWriter(long id)
         {
-            if( id == 0 ) //if(_writerService.GetWriterById(id) == null) //TODO: Test for missing record using the lambda Extension method .Any()
+            //TODO: Test for missing record using the lambda Extension method .Any()
+            if(_writerService.GetWriterById(id) is null)  //if(_writerService.GetWriterById(id) == null)
             {
-                return Ok(); //TODO: if not return NotFound() instead of Ok()
+                //TODO: if not return NotFound() instead of Ok()
+                return NotFound();
             }
 
-        //Otherwise return Ok(writer);
+            //Otherwise return Ok(writer);
             return Ok( _writerService.GetWriterById(id) );
         }
 
@@ -45,15 +47,14 @@ namespace IndyBooks.Controllers
         [HttpDelete]
         public ActionResult Delete(long id)
         {
-            //TODO: Udpate the  for record using the _writerService.GetWritersList and the Any() collections method
-            if (true) 
+            //TODO: Update the for record using the _writerService.GetWritersList and the Any() collections method
+            if (_writerService.GetWriterById(id) is null) 
             { 
                 return NotFound(); 
             }
 
             //TODO: Pass the _writerService DeleteWriterById method to Accepted() below
-
-            return Accepted();
+            return Accepted( _writerService.DeleteWriterById(id) );
         }
         /**
          * CREATE: Add a new writer to the collection
@@ -64,11 +65,16 @@ namespace IndyBooks.Controllers
         public IActionResult PostWriter([FromBody]Writer writer)
         {
             //TODO: Test for an invalid ModelState -> return BadRequest();
+            if( !ModelState.IsValid)
+            {
+                return BadRequest();
+            }
 
 
             //TODO: Pass the result from the _writerService PostWriter method to Accepted() below
+            long result = _writerService.PostWriter(writer);
 
-            return Accepted( 0 );
+            return Accepted( result );
 
         }
        
@@ -80,15 +86,24 @@ namespace IndyBooks.Controllers
         [HttpPut] 
         public IActionResult PutWriter([FromBody]Writer writer, long id)
         {
-        //TODO: Test for an invalid ModelState -> return BadRequest();
+            //TODO: Test for an invalid ModelState -> return BadRequest();
+            if( !ModelState.IsValid )
+            {
+                return BadRequest();
+            }
 
 
-        //TODO: Test for missing record using Any() -> return NotFound();
+            //TODO: Test for missing record using Any() -> return NotFound();
+            if (_writerService.GetWriterById(id) is null) 
+            { 
+                return NotFound(); 
+            }
 
 
-        //TODO: Otherwise, pass the results of the _writerService PutWriter method to Accepted() below
+            //TODO: Otherwise, pass the results of the _writerService PutWriter method to Accepted() below
+            Writer result = _writerService.GetWriterById(id);
 
-            return Accepted( new Writer{ Name = "Replace me with the results of the PutWriter method in WriterService"} );
+            return Accepted( result );
         }
     }
 }
